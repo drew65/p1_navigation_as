@@ -1,4 +1,4 @@
-# Banana Frenzy Agent
+# P1 Navigation Report
 
 ## Project's goal
 
@@ -136,7 +136,8 @@ The Neural Networks use the Adam optimizer with a learning rate LR=7e-4 and are 
 
 Given the chosen architecture and parameters, our results are :
 
-![Training logs](images/training_logs.png)
+```
+Trainning log:
 seed  666   self.seed  213  # To randomise the seed used to create the environment, initial network weights and random selection processes an initial 'seed' was used to select a random seed from 0 to 'seed'
 [512, 256, 128, 64]         # dimetions of the network hidden layers
 buffer size  100000         # size of the ReplayBuffer
@@ -150,7 +151,9 @@ Episode 500	Average Score: 11.51
 Episode 551	Average Score: 13.06
 
 Environment solved in 551 episodes! Average Score: 13.06
+```
 
+[Score evolution during the training
 ![Score evolution during the training](images/score_plot.png)
 
 **These results meets the project's expectation as the agent is able to receive an average reward (over 100 episodes) of at least +13, and in 1023 episodes only** (In comparison, according to Udacity's solution code for the project, their agent was benchmarked to be able to solve the project in fewer than 1800 episodes)
