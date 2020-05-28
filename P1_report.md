@@ -65,19 +65,19 @@ The programatic implementation of this agorithm can be found in the (DQN) *agent
 
 Based on the above paper the author implemented the following Double Deep Q-Network algorithm, with some of the modifications suggested in 'Grokking Deep Reinforcement Learning Meap v12' chapter 9.3.5, section 'Its in the Detail: The full Double Deep Q-Network (DDQN) algorithm'
 
-Approximate the action-value function Q(s,a; θ). ·  
-Use a state-in-values-out architecture (nodes: 37, 512, 256, 128, 4). ·  
-Optimize the action-value function to approximate the optimal actionvalue function q*(s,a). ·  
-Use off-policy TD targets (r + gamma*max_a’Q(s’,a’; θ)) to evaluate policies. ·  
-Use Adam Optimizer as our optimizer with a learning rate of 0.0007. Note that before I used 0.0005 because without double learning (vanilla DQN) some seeds fail if I train with a learning rate of 0.0007. Perhaps stability? 
-In DDQN, on the other hand, training with a higher learning rate works best. 
-An exponentially decaying epsilon-greedy strategy (from 1.0 to 0.3 in roughly 2,000 steps) to improve policies. ·  
-A replay buffer with 100 samples min, 100,000 max, and a batch of 64. ·  
-A target network that freezes for 15 steps and then updates fully. DDQN, just like DQN has the same 3 main steps: 
-1. Collect experience: (St, At, Rt+1, St+1, Dt+1), and insert it into the replay buffer. 
-2. Randomly sample a mini-batch from the buffer and calculate the off-policy TD targets for the whole
-batch: r + gamma*max_a’Q(s’,a’; θ). 
-3. Fit the action-value function Q(s,a; θ): Using Adam Optimizer.
+- Approximate the action-value function Q(s,a; θ). ·  
+- Use a state-in-values-out architecture (nodes: 37, 512, 256, 128, 4). ·  
+- Optimize the action-value function to approximate the optimal actionvalue function q*(s,a). ·  
+- Use off-policy TD targets (r + gamma*max_a’Q(s’,a’; θ)) to evaluate policies. ·  
+- Use Adam Optimizer as our optimizer with a learning rate of 0.0007. Note that before I used 0.0005 because without double learning (vanilla DQN) some seeds fail if I train with a learning rate of 0.0007. Perhaps stability? 
+*In DDQN, on the other hand, training with a higher learning rate works best*
+- An exponentially decaying epsilon-greedy strategy (from 1.0 to 0.3 in roughly 2,000 steps) to improve policies. ·  
+- A replay buffer with 100 samples min, 100,000 max, and a batch of 64. ·  
+- A target network that freezes for 15 steps and then updates fully. DDQN, just like DQN has the same 3 main steps: 
+    1. Collect experience: (St, At, Rt+1, St+1, Dt+1), and insert it into the replay buffer. 
+    2. Randomly sample a mini-batch from the buffer and calculate the off-policy TD targets for the whole
+    batch: r + gamma*max_a’Q(s’,a’; θ). 
+    3. Fit the action-value function Q(s,a; θ): Using Adam Optimizer.   
 
 
 ### Code implementation
@@ -208,10 +208,3 @@ Other enhancements might also be implemented to increase the performance of the 
 
 - [Prioritized experience replay](https://arxiv.org/abs/1511.05952)
 > Experience replay lets online reinforcement learning agents remember and reuse experiences from the past. In prior work, experience transitions were uniformly sampled from a replay memory. However, this approach simply replays transitions at the same frequency that they were originally experienced, regardless of their significance. In this paper we develop a framework for prioritizing experience, so as to replay important transitions more frequently, and therefore learn more efficiently. We use prioritized experience replay in Deep Q-Networks (DQN), a reinforcement learning algorithm that achieved human-level performance across many Atari games. DQN with prioritized experience replay achieves a new state-of-the-art, outperforming DQN with uniform replay on 41 out of 49 games.
-
-
-### Misc : Configuration used 
-
-This agent has been trained on the Udacity provided online workspace. This environment allows to use a Nvidia K80 GPU that is used for the training. (The headless / no visualization version of the Unity environment was thus used)
-
-My setup is a "Deep Learning Dev Box", and is basically a Linux GPU Server, running Docker containers (using Nvidia Docker 2), serving Jupyter Lab notebooks which are accessed remotely via a web interface (or a ssh connection) : unfortunately this setup does not seem suitable to run Unity ML agent, with the GPU and providing a display for for the agent (See [Unity docuementation](https://github.com/Unity-Technologies/ml-agents/blob/master/docs/Using-Docker.md) for more details)
