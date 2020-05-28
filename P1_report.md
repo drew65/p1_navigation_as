@@ -51,15 +51,33 @@ I addressed these instabilities with a variant of Q-learning, which uses two key
 The programatic implementation of this agorithm can be found in the (DQN) *agent* class method *learn* situated in the *dqn_agent.py* file.
 
 ### Double Deep Q-Networks
+
 - [Double DQN](https://arxiv.org/abs/1509.06461)
-> The popular Q-learning algorithm is known to overestimate action values under certain conditions. It was not previously known whether, in practice, such overestimations are common, whether they harm performance, and whether they can generally be prevented. In this paper, we answer all these questions affirmatively. In particular, we first show that the recent DQN algorithm, which combines Q-learning with a deep neural network, suffers from substantial overestimations in some games in the Atari 2600 domain. We then show that the idea behind the Double Q-learning algorithm, which was introduced in a tabular setting, can be generalized to work with large-scale function approximation. We propose a specific adaptation to the DQN algorithm and show that the resulting algorithm not only reduces the observed overestimations, as hypothesized, but that this also leads to much better performance on several games.
+> This paper highlights the followig:
+- The popular Q-learning algorithm is known to overestimate action values under certain conditions. 
+- It was not previously known whether, in practice, such overestimations are common, whether they harm performance, and whether they can generally be prevented. This paper answer all these questions affirmatively. 
+- In particular, it first shows that the recent DQN algorithm, which combines Q-learning with a deep neural network, suffers from substantial overestimations in some games in the Atari 2600 domain. 
+- It then show that the idea behind the Double Q-learning algorithm, which was introduced in a tabular setting, can be generalized to work with large-scale function approximation. 
+- It proposes a specific adaptation to the DQN algorithm and show that the resulting algorithm not only reduces the observed overestimations, as hypothesized, but that this also leads to much better performance on several games.
 
 
 ### Algorithm
 
-![Deep Q-Learning algorithm from Udacity course](./images/DQN.png)
+Based on the above paper the author implemented the following Double Deep Q-Network algorithm, with some of the modifications suggested in 'Grokking Deep Reinforcement Learning Meap v12' chapter 9.3.5, section 'Its in the Detail: The full Double Deep Q-Network (DDQN) algorithm'
 
-This algorithm screenshot is taken from the [Deep Reinforcement Learning Nanodegree course](https://www.udacity.com/course/deep-reinforcement-learning-nanodegree--nd893)
+Approximate the action-value function Q(s,a; θ). ·  
+Use a state-in-values-out architecture (nodes: 37, 512, 256, 128, 4). ·  
+Optimize the action-value function to approximate the optimal actionvalue function q*(s,a). ·  
+Use off-policy TD targets (r + gamma*max_a’Q(s’,a’; θ)) to evaluate policies. ·  
+Use Adam Optimizer as our optimizer with a learning rate of 0.0007. Note that before I used 0.0005 because without double learning (vanilla DQN) some seeds fail if I train with a learning rate of 0.0007. Perhaps stability? 
+In DDQN, on the other hand, training with a higher learning rate works best. 
+An exponentially decaying epsilon-greedy strategy (from 1.0 to 0.3 in roughly 2,000 steps) to improve policies. ·  
+A replay buffer with 100 samples min, 100,000 max, and a batch of 64. ·  
+A target network that freezes for 15 steps and then updates fully. DDQN, just like DQN has the same 3 main steps: 
+1. Collect experience: (St, At, Rt+1, St+1, Dt+1), and insert it into the replay buffer. 
+2. Randomly sample a mini-batch from the buffer and calculate the off-policy TD targets for the whole
+batch: r + gamma*max_a’Q(s’,a’; θ). 
+3. Fit the action-value function Q(s,a; θ): Using Adam Optimizer.
 
 
 ### Code implementation
@@ -68,9 +86,9 @@ The code used here is derived from the "Lunar Lander" tutorial from the [Deep Re
 
 The code consist of :
 
-- model.py : In this python file, a PyTorch QNetwork class is implemented. This is a regular fully connected Deep Neural Network using the [PyTorch Framework](https://pytorch.org/docs/0.4.0/). This network will be trained to predict the action to perform depending on the environment's observed states. This Neural Network is used by the DQN agent and is composed of :
+- model.py : In this python file, a PyTorch QNetwork class is implemented. This is a regular fully connected Deep Neural Network using the [PyTorch Framework](https://pytorch.org/docs/stable/). This network will be trained to predict the action to perform depending on the environment's observed states. This Neural Network is used by the DQN agent and is composed of :
   - the input layer which size depends of the state_size parameter passed in the constructor (37). There are 37 dimensions in the imput state space.
-  - 4 hidden fully connected layers of 512, 256, 128, 64  cells respectivly.
+  - 4 hidden fully connected layers of [512, 256, 128, 64]  cells respectivly.
   - the output layer which size depends on the action_size parameter passed in the constructor (4), here there are 4 possible actions.
 - dqn_agent.py : In this python file, a DQN agent and a Replay Buffer memory used by the DQN agent) are defined.
   - The DQN agent class is implemented, as described in the Double Deep Q-Learning algorithm. It provides several methods :
@@ -107,6 +125,26 @@ The code consist of :
   - Save the chechpoint every 100 episodes
   - Plot the scores
   - saves the final state_dict weights
+
+### Configuration used 
+
+The agent has been trained on the following:
+```
+Hardware:
+    Device name : Gigabyte AERO 15,
+    Memory : 31.2 GiB,
+    Processor : Intel® Core™ i7-8750H CPU @ 2.20GHz × 12,
+    Graphics : GeForce RTX 2070 with Max-Q Design/PCIe/SSE2,
+    OS type : 64-bit,
+
+Software :
+    OS : Ubuntu 18.04.4 LTS 64-bit,
+    Cuda : 10.1
+    python  3.6
+    pytorch 1.5
+```
+This environment allows to use a GeForce RTX 2070 GPU for the training. 
+
 
 ### DDQN parameters and results
 
@@ -154,9 +192,9 @@ Environment solved in 551 episodes! Average Score: 13.06
 ```
 
 [Score evolution during the training
-![Score evolution during the training](images/score_plot.png)
+![Evolution of average score during training](av_score.png)
 
-**These results meets the project's expectation as the agent is able to receive an average reward (over 100 episodes) of at least +13, and in 1023 episodes only** (In comparison, according to Udacity's solution code for the project, their agent was benchmarked to be able to solve the project in fewer than 1800 episodes)
+**These results meets the project's expectation as the agent is able to receive an average reward (over 100 episodes) of at least +13, and in 551 episodes only** (In comparison, according to Udacity's solution code for the project, their agent was benchmarked to be able to solve the project in fewer than 1800 episodes)
 
 ### Ideas for future work
 
