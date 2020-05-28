@@ -40,6 +40,8 @@ The task is episodic, and in order to solve the environment, the agent must get 
 
 3. Place the file in the DRLND GitHub repository, in the `p1_navigation_as/` folder, and unzip (or decompress) the file. 
 
+4. Optionally if an appropriate GPU is present, instal Cuda as required by the OS in use, see [cuda](https://docs.nvidia.com/cuda/)
+
 ### Instructions
 
 Follow the instructions in `P1_navigation_DDQN_01.ipynb` to get started and see how this agent was trained!  
